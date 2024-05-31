@@ -163,23 +163,23 @@ plot_learning_curve(best_ada_car, "Learning Curve (Best AdaBoost, Car Evaluation
 
 # Plot validation curves for Neural Network (hidden_layer_sizes)
 param_range_nn = [10, 50, 100, 200]
-plot_validation_curve(MLPClassifier(max_iter=10000), "Validation Curve (NN, hidden_layer_sizes)", x_wholesale_train, y_wholesale_train, param_name="hidden_layer_sizes", param_range=param_range_nn)
-plot_validation_curve(MLPClassifier(max_iter=10000), "Validation Curve (NN, hidden_layer_sizes)", X_car_train, y_car_train, param_name="hidden_layer_sizes", param_range=param_range_nn)
+plot_validation_curve(MLPClassifier(max_iter=10000), "Validation Curve (NN, hidden_layer_sizes, Wholesale Customers)", x_wholesale_train, y_wholesale_train, param_name="hidden_layer_sizes", param_range=param_range_nn)
+plot_validation_curve(MLPClassifier(max_iter=10000), "Validation Curve (NN, hidden_layer_sizes, Car Evaluation)", X_car_train, y_car_train, param_name="hidden_layer_sizes", param_range=param_range_nn)
 
 # Plot validation curves for SVM (C parameter)
 param_range_svm_c = np.logspace(-3, 2, 6)
-plot_validation_curve(SVC(kernel='linear'), "Validation Curve (SVM, C parameter)", x_wholesale_train, y_wholesale_train, param_name="C", param_range=param_range_svm_c)
-plot_validation_curve(SVC(kernel='linear'), "Validation Curve (SVM, C parameter)", X_car_train, y_car_train, param_name="C", param_range=param_range_svm_c)
+plot_validation_curve(SVC(kernel='linear'), "Validation Curve (SVM, C parameter, Wholesale Customers)", x_wholesale_train, y_wholesale_train, param_name="C", param_range=param_range_svm_c)
+plot_validation_curve(SVC(kernel='linear'), "Validation Curve (SVM, C parameter, Car Evaluation)", X_car_train, y_car_train, param_name="C", param_range=param_range_svm_c)
 
 # Plot validation curves for SVM (gamma parameter, RBF kernel)
 param_range_svm_gamma = np.logspace(-4, 1, 6)
-plot_validation_curve(SVC(kernel='rbf'), "Validation Curve (SVM, gamma parameter)", x_wholesale_train, y_wholesale_train, param_name="gamma", param_range=param_range_svm_gamma)
-plot_validation_curve(SVC(kernel='rbf'), "Validation Curve (SVM, gamma parameter)", X_car_train, y_car_train, param_name="gamma", param_range=param_range_svm_gamma)
+plot_validation_curve(SVC(kernel='rbf'), "Validation Curve (SVM, gamma parameter, Wholesale Customers)", x_wholesale_train, y_wholesale_train, param_name="gamma", param_range=param_range_svm_gamma)
+plot_validation_curve(SVC(kernel='rbf'), "Validation Curve (SVM, gamma parameter, Car Evaluation)", X_car_train, y_car_train, param_name="gamma", param_range=param_range_svm_gamma)
 
 # Plot validation curves for k-NN (n_neighbors)
 param_range_knn = np.arange(1, 11)
-plot_validation_curve(KNeighborsClassifier(), "Validation Curve (k-NN, n_neighbors)", x_wholesale_train, y_wholesale_train, param_name="n_neighbors", param_range=param_range_knn)
-plot_validation_curve(KNeighborsClassifier(), "Validation Curve (k-NN, n_neighbors)", X_car_train, y_car_train, param_name="n_neighbors", param_range=param_range_knn)
+plot_validation_curve(KNeighborsClassifier(), "Validation Curve (k-NN, n_neighbors, Wholesale Customers)", x_wholesale_train, y_wholesale_train, param_name="n_neighbors", param_range=param_range_knn)
+plot_validation_curve(KNeighborsClassifier(), "Validation Curve (k-NN, n_neighbors, Car Evaluation)", X_car_train, y_car_train, param_name="n_neighbors", param_range=param_range_knn)
 
 # Classification reports and confusion matrices
 models = {
