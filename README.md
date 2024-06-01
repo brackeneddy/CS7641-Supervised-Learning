@@ -4,7 +4,7 @@
 - A1.py
 
 ## Two Datasets
-- `https://archive.ics.uci.edu/dataset/19/car+evaluation`
+- `[Car Evalutation](https://archive.ics.uci.edu/dataset/19/car+evaluation)`
 - `https://archive.ics.uci.edu/dataset/292/wholesale+customers`
 
 ## Plots
