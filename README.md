@@ -21,3 +21,5 @@
 
 ## Plots
 - Plots Directory (all figures generated through running A1.py)
+
+#### CREATED BY BRACKEN EDDY (BEDDY8). NOT FOR USE BY ANY OTHER CS7641 STUDENTS.
