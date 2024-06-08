@@ -34,9 +34,12 @@ label_encode_wholesale = LabelEncoder()
 wholesale_customers["Category"] = label_encode_wholesale.fit_transform(
     wholesale_customers["Category"]
 )
+
 x_wholesale = wholesale_customers.drop(columns=["Total Spend", "Category"])
 y_wholesale = wholesale_customers["Category"]
+
 scaler_wholesale = StandardScaler()
+
 x_wholesale_scaled = scaler_wholesale.fit_transform(x_wholesale)
 x_wholesale_train, x_wholesale_test, y_wholesale_train, y_wholesale_test = (
     train_test_split(x_wholesale_scaled, y_wholesale, test_size=0.3, random_state=42)
@@ -44,12 +47,17 @@ x_wholesale_train, x_wholesale_test, y_wholesale_train, y_wholesale_test = (
 
 # Preprocess car
 label_encode_car = LabelEncoder()
+
 for column in ["buying", "maint", "doors", "persons", "lug_boot", "safety"]:
     car_evaluation[column] = label_encode_car.fit_transform(car_evaluation[column])
+
 car_evaluation["class"] = label_encode_car.fit_transform(car_evaluation["class"])
+
 X_car = car_evaluation.drop(columns=["class"])
 y_car = car_evaluation["class"]
+
 scaler_car = StandardScaler()
+
 X_car_scaled = scaler_car.fit_transform(X_car)
 X_car_train, X_car_test, y_car_train, y_car_test = train_test_split(
     X_car_scaled, y_car, test_size=0.3, random_state=42
@@ -73,6 +81,7 @@ def plot_learning_curve(estimator, title, x, y, cv=5, n_jobs=None):
     plt.xlabel("Training examples")
     plt.ylabel("Score")
     plt.grid()
+
     plt.fill_between(
         train_sizes,
         train_scores_mean - train_scores_std,
@@ -80,6 +89,7 @@ def plot_learning_curve(estimator, title, x, y, cv=5, n_jobs=None):
         alpha=0.1,
         color="r",
     )
+
     plt.fill_between(
         train_sizes,
         test_scores_mean - test_scores_std,
@@ -87,6 +97,7 @@ def plot_learning_curve(estimator, title, x, y, cv=5, n_jobs=None):
         alpha=0.1,
         color="g",
     )
+
     plt.plot(train_sizes, train_scores_mean, "o-", color="r", label="Training score")
     plt.plot(
         train_sizes, test_scores_mean, "o-", color="g", label="Cross-validation score"
@@ -128,6 +139,7 @@ def plot_validation_curve(
         alpha=0.1,
         color="r",
     )
+
     plt.fill_between(
         param_range,
         test_scores_mean - test_scores_std,
@@ -135,6 +147,7 @@ def plot_validation_curve(
         alpha=0.1,
         color="g",
     )
+
     plt.plot(param_range, train_scores_mean, "o-", color="r", label="Training score")
     plt.plot(
         param_range, test_scores_mean, "o-", color="g", label="Cross-validation score"
@@ -150,9 +163,11 @@ param_grid_nn = {
     "alpha": [0.0001, 0.001, 0.01],
     "max_iter": [1000, 1500, 2000],
 }
+
 nn_grid_search = GridSearchCV(
     MLPClassifier(), param_grid_nn, cv=5, scoring="accuracy", n_jobs=-1
 )
+
 nn_grid_search.fit(x_wholesale_train, y_wholesale_train)
 print("Best NN parameters (Wholesale Customers):", nn_grid_search.best_params_)
 best_nn_wholesale = nn_grid_search.best_estimator_
@@ -163,9 +178,11 @@ param_grid_svm = {
     "gamma": np.logspace(-4, 1, 6),
     "kernel": ["linear", "rbf"],
 }
+
 svm_grid_search = GridSearchCV(
     SVC(), param_grid_svm, cv=5, scoring="accuracy", n_jobs=-1
 )
+
 svm_grid_search.fit(x_wholesale_train, y_wholesale_train)
 print("Best SVM parameters (Wholesale Customers):", svm_grid_search.best_params_)
 best_svm_wholesale = svm_grid_search.best_estimator_
@@ -175,16 +192,20 @@ param_grid_knn = {"n_neighbors": np.arange(1, 11), "metric": ["euclidean", "manh
 knn_grid_search = GridSearchCV(
     KNeighborsClassifier(), param_grid_knn, cv=5, scoring="accuracy", n_jobs=-1
 )
+
 knn_grid_search.fit(x_wholesale_train, y_wholesale_train)
 print("Best k-NN parameters (Wholesale Customers):", knn_grid_search.best_params_)
 best_knn_wholesale = knn_grid_search.best_estimator_
 
-# Grid Search for AdaBoost
+# Grid Search for AdaBoost with pruning
 param_grid_ada = {
     "n_estimators": [50, 100, 200],
     "learning_rate": [0.01, 0.1, 1.0],
     "estimator__max_depth": [1, 2, 3],
+    "estimator__min_samples_split": [2, 5, 10],
+    "estimator__min_samples_leaf": [1, 2, 4],
 }
+
 ada_estimator = DecisionTreeClassifier()
 ada_grid_search = GridSearchCV(
     AdaBoostClassifier(estimator=ada_estimator),
@@ -193,6 +214,7 @@ ada_grid_search = GridSearchCV(
     scoring="accuracy",
     n_jobs=-1,
 )
+
 ada_grid_search.fit(x_wholesale_train, y_wholesale_train)
 print("Best AdaBoost parameters (Wholesale Customers):", ada_grid_search.best_params_)
 best_ada_wholesale = ada_grid_search.best_estimator_
@@ -204,18 +226,21 @@ plot_learning_curve(
     x_wholesale_train,
     y_wholesale_train,
 )
+
 plot_learning_curve(
     best_svm_wholesale,
     "Learning Curve (Best SVM, Wholesale Customers)",
     x_wholesale_train,
     y_wholesale_train,
 )
+
 plot_learning_curve(
     best_knn_wholesale,
     "Learning Curve (Best k-NN, Wholesale Customers)",
     x_wholesale_train,
     y_wholesale_train,
 )
+
 plot_learning_curve(
     best_ada_wholesale,
     "Learning Curve (Best AdaBoost, Wholesale Customers)",
@@ -244,12 +269,15 @@ best_ada_car = ada_grid_search.best_estimator_
 plot_learning_curve(
     best_nn_car, "Learning Curve (Best NN, Car Evaluation)", X_car_train, y_car_train
 )
+
 plot_learning_curve(
     best_svm_car, "Learning Curve (Best SVM, Car Evaluation)", X_car_train, y_car_train
 )
+
 plot_learning_curve(
     best_knn_car, "Learning Curve (Best k-NN, Car Evaluation)", X_car_train, y_car_train
 )
+
 plot_learning_curve(
     best_ada_car,
     "Learning Curve (Best AdaBoost, Car Evaluation)",
@@ -259,6 +287,7 @@ plot_learning_curve(
 
 # Plot validation curves for Neural Network (hidden_layer_sizes)
 param_range_nn = [10, 50, 100, 200]
+
 plot_validation_curve(
     MLPClassifier(max_iter=10000),
     "Validation Curve (NN, hidden_layer_sizes, Wholesale Customers)",
@@ -267,6 +296,7 @@ plot_validation_curve(
     param_name="hidden_layer_sizes",
     param_range=param_range_nn,
 )
+
 plot_validation_curve(
     MLPClassifier(max_iter=10000),
     "Validation Curve (NN, hidden_layer_sizes, Car Evaluation)",
@@ -278,6 +308,7 @@ plot_validation_curve(
 
 # Plot validation curves for SVM (C parameter)
 param_range_svm_c = np.logspace(-3, 2, 6)
+
 plot_validation_curve(
     SVC(kernel="linear"),
     "Validation Curve (SVM, C parameter, Wholesale Customers)",
@@ -286,6 +317,7 @@ plot_validation_curve(
     param_name="C",
     param_range=param_range_svm_c,
 )
+
 plot_validation_curve(
     SVC(kernel="linear"),
     "Validation Curve (SVM, C parameter, Car Evaluation)",
@@ -297,6 +329,7 @@ plot_validation_curve(
 
 # Plot validation curves for SVM (gamma parameter, RBF kernel)
 param_range_svm_gamma = np.logspace(-4, 1, 6)
+
 plot_validation_curve(
     SVC(kernel="rbf"),
     "Validation Curve (SVM, gamma parameter, Wholesale Customers)",
@@ -305,6 +338,7 @@ plot_validation_curve(
     param_name="gamma",
     param_range=param_range_svm_gamma,
 )
+
 plot_validation_curve(
     SVC(kernel="rbf"),
     "Validation Curve (SVM, gamma parameter, Car Evaluation)",
@@ -316,6 +350,7 @@ plot_validation_curve(
 
 # Plot validation curves for k-NN (n_neighbors)
 param_range_knn = np.arange(1, 11)
+
 plot_validation_curve(
     KNeighborsClassifier(),
     "Validation Curve (k-NN, n_neighbors, Wholesale Customers)",
@@ -324,6 +359,7 @@ plot_validation_curve(
     param_name="n_neighbors",
     param_range=param_range_knn,
 )
+
 plot_validation_curve(
     KNeighborsClassifier(),
     "Validation Curve (k-NN, n_neighbors, Car Evaluation)",
